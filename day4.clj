@@ -1,4 +1,4 @@
-(def challenge (slurp "C:/Users/sakariha/projects/clojure/adventofcode/input4.txt"))
+(def challenge (slurp "C:/Users/sakariha/projects/clojure/adventofcode/challenges/input4.txt"))
 (def passphrases (clojure.string/split challenge #"\n"))
 
 (defn valid? [passphrase]

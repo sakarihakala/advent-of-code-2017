@@ -1,4 +1,4 @@
-(def challenge (slurp "C:/Users/sakariha/projects/clojure/adventofcode/input5.txt"))
+(def challenge (slurp "C:/Users/sakariha/projects/clojure/adventofcode/challenges/input5.txt"))
 
 (def chal (mapv #(Integer/parseInt %) (clojure.string/split challenge #"\n")))
 
