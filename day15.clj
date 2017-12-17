@@ -55,6 +55,9 @@
 
 (last (take 40000000 (iterate iterate-fn {:a-val 634 :b-val 301 :result 0})))
 
+(frequencies (take 40000000 (map same-last-16-bíts (iterate iterator-a 634)
+                                                  (iterate iterator-b 301))))
+
 (defn iterate-fn-v [[a b res rounds]]
   (let [new-a-val (iterator-a a)
         new-b-val (iterator-b b)]
@@ -68,4 +71,22 @@
         :else
           (recur [new-a-val new-b-val res (inc rounds)]))))
 
-(iterate-fn-v [634 301 0 0]
+(iterate-fn-v [634 301 0 0])
+
+(defn iterator-a-with-criteria-4 [seed]
+  (let [value (rem (* seed 16807) 2147483647)]
+    (if (= (rem value 4) 0)
+      value
+      (recur value))))
+
+(defn iterator-b-with-criteria-8 [seed]
+  (let [value (rem (* seed 48271) 2147483647)]
+    (if (= (rem value 8) 0)
+      value
+      (recur value))))
+
+(frequencies (take 5000000 (map same-last-16-bíts (iterate iterator-a-with-criteria-4 65)
+                                                  (iterate iterator-b-with-criteria-8 8921))))
+
+(frequencies (take 5000000 (map same-last-16-bíts (iterate iterator-a-with-criteria-4 634)
+                                                  (iterate iterator-b-with-criteria-8 301))))
