@@ -119,16 +119,22 @@ test-map
         (assoc :grid (update-grid grid pos :clean))
         (assoc :pos (mapv + pos (get-reverse-adder dir)))
         (assoc :dir (get-dir dir :reverse)))
-    :weagened
-    (-> game
-        (update-in [:round] inc)
-        (assoc :grid (update-grid grid pos :infected))
-        (assoc :pos (mapv + pos (get-straight-adder dir)))
-        (assoc :dir (get-dir dir :no-turn)))
-    :else
+    :weakened
     (-> game
         (update-in [:round] inc)
         (update-in [:infected] inc)
+        (assoc :grid (update-grid grid pos :infected))
+        (assoc :pos (mapv + pos (get-straight-adder dir)))
+        (assoc :dir (get-dir dir :no-turn)))
+    :clean
+    (-> game
+        (update-in [:round] inc)
+        (assoc :grid (update-grid grid pos :weakened))
+        (assoc :pos (mapv + pos (get-left-adder dir)))
+        (assoc :dir (get-dir dir :left)))
+    nil
+    (-> game
+        (update-in [:round] inc)
         (assoc :grid (update-grid grid pos :weakened))
         (assoc :pos (mapv + pos (get-left-adder dir)))
         (assoc :dir (get-dir dir :left)))
@@ -156,14 +162,15 @@ test-map
 (get {[0 0] false, [0 1] false, [0 2] true, [1 0] true, [1 1] false, [1 2] false, [2 0] false, [2 1] false, [2 2] false} [1 0])
 
 (defn play-evolved [{:keys [pos dir round infected] :as game}]
-   (if (= round 100)
+   (if (= round 10000000)
      infected
      (recur (burst-evolved game))))
 
 (defn play-test-evolved [grid]
-  (play {:grid grid :pos [1 1] :dir :up :round 0 :infected 0}))
+  (println "*****")
+  (play-evolved {:grid grid :pos [1 1] :dir :up :round 0 :infected 0}))
 
-(defn play-test-evolved [grid]
+(defn play-grid-evolved [grid]
   (play-evolved {:grid grid :pos [12 12] :dir :up :round 0 :infected 0}))
 
 (def test-map-evolved
@@ -175,4 +182,16 @@ test-map
                       (for [col (range 3)]
                         {[row col] (if (= (get-cell [row col] test-grid) \#) :infected :clean)})))))
 
+(def grid-map-evolved
+    (reduce #(conj %1 %2)
+            {}
+            (for [row (range 25)]
+              (reduce #(conj %1 %2)
+                      {}
+                      (for [col (range 25)]
+                        {[row col] (if (= (get-cell [row col] grid) \#) :infected :clean)})))))
+
+test-grid-evolved
+
 (play-test-evolved test-map-evolved)
+(play-grid-evolved grid-map-evolved)
